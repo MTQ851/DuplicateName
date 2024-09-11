@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>王者荣耀改名工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-image: url('bzhw.jpg');
+            background-size: cover;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+            max-width: 90%;
+            box-sizing: border-box;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        input {
+            max-width: 300px;
+        }
+        button {
+            background: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        #copyFeedback {
+            color: #4CAF50;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>王者荣耀改名工具</h1>
+    <input type="text" id="oldName" placeholder="输入要改的名称">
+    <button onclick="generateNewName()">生成新名称</button>
+    <div class="result" id="result" style="display:none;">
+        <p>新名称: <span id="newName"></span></p>
+        <button onclick="copyToClipboard()">复制</button>
+        <p id="copyFeedback">名称已复制!</p>
+    </div>
+</div>
+
+<script>
+    async function generateNewName() {
+        const oldName = document.getElementById('oldName').value;
+        if (!oldName) return alert('请输入要改的名称');
+
+        const response = await fetch('https://api.kertennet.com/game/NameGenerated', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: oldName })
+        });
+
+        const data = await response.json();
+        if (data.code === 200) {
+            document.getElementById('newName').innerText = data.data.newName;
+            document.getElementById('result').style.display = 'block';
+        } else {
+            alert('生成新名称失败');
+        }
+    }
+
+    function copyToClipboard() {
+        const newName = document.getElementById('newName').innerText;
+        const tempInput = document.createElement('input');
+        tempInput.value = newName;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                document.getElementById('copyFeedback').style.display = 'block';
+            } else {
+                throw new Error('无法复制');
+            }
+        } catch (err) {
+            alert('复制失败: ' + err);
+        }
+        document.body.removeChild(tempInput);
+    }
+</script>
+</body>
+</html>
