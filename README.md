@@ -46,7 +46,7 @@
 
    ```bash
    mvn package
-   java -jar target/DuplicateName.jar.jar
+   java -jar target/DuplicateName.jar
    ```
 
 4. **访问应用**
